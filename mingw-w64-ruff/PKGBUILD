@@ -4,15 +4,18 @@ _realname=ruff
 pkgbase=mingw-w64-${_realname}
 pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}"
          "${MINGW_PACKAGE_PREFIX}-python-${_realname}")
-pkgver=0.3.5
+pkgver=0.5.0
 pkgrel=1
 pkgdesc="An extremely fast Python linter, written in Rust (mingw-w64)"
 arch=('any')
 mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
-url='https://github.com/astral-sh/ruff'
+url='https://astral.sh/ruff'
+msys2_repository_url='https://github.com/astral-sh/ruff'
 license=('spdx:MIT')
 msys2_references=(
   'archlinux: ruff'
+  'anitya: 370829'
+  'pypi: ruff'
 )
 makedepends=(
   "${MINGW_PACKAGE_PREFIX}-rust"
@@ -20,9 +23,9 @@ makedepends=(
   "${MINGW_PACKAGE_PREFIX}-python-installer"
 )
 options=('!strip')
-source=("${url}/archive/v${pkgver}/${_realname}-${pkgver}.tar.gz"
+source=("https://github.com/astral-sh/ruff/archive/${pkgver}/${_realname}-${pkgver}.tar.gz"
         "001-fix-building-with-gcc.patch")
-sha256sums=('44ec048e84335eaafb435c50edec83dbd1cd818fad4fe41d9c6e12a9837f0484'
+sha256sums=('d82f44f45fc310345cb7d4ce3fc5c9a39556515062002804bb4ae9f6e191c2b2'
             'a266b1594ab3280525d7bce5adb91026c1e183696a4586255d4a0fcd008d41c2')
 noextract=("${_realname}-${pkgver}.tar.gz")
 
@@ -60,7 +63,7 @@ package_ruff() {
   install -Dm755 ./target/release/ruff "${pkgdir}${MINGW_PREFIX}/bin/ruff"
   install -Dm644 LICENSE -t "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/"
 
-  local _complete="./target/release/ruff --generate-shell-completion"
+  local _complete="./target/release/ruff generate-shell-completion"
   $_complete bash | install -Dm644 /dev/stdin "${pkgdir}${MINGW_PREFIX}/share/bash-completion/completions/ruff.bash"
   $_complete fish | install -Dm644 /dev/stdin "${pkgdir}${MINGW_PREFIX}/share/fish/vendor_completions.d/ruff.fish"
   $_complete zsh  | install -Dm644 /dev/stdin "${pkgdir}${MINGW_PREFIX}/share/zsh/site-functions/_ruff"

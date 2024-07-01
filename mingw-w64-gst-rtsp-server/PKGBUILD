@@ -3,7 +3,7 @@
 _realname=gst-rtsp-server
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=1.24.1
+pkgver=1.24.5
 pkgrel=1
 pkgdesc="GStreamer RTSP server library (mingw-w64)"
 arch=('any')
@@ -29,7 +29,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs"
          "${MINGW_PACKAGE_PREFIX}-gst-plugins-ugly"
          "${MINGW_PACKAGE_PREFIX}-gst-plugins-bad")
 source=("${url}/src/${_realname}/${_realname}-${pkgver}.tar.xz"{,.asc})
-sha256sums=('ab436a2ec9c3c58fbfd3c5b1736419891bb5315d136d7c72c58479f2807008e6'
+sha256sums=('a3062665e41814d3dba3e02b7b06b77326d54d2b6f178ffcb196af9b91a1bfb9'
             'SKIP')
 validpgpkeys=('D637032E45B8C6585B9456565D2EEE6F6F349D7C') # Tim Müller <tim@gstreamer-foundation.org>
 

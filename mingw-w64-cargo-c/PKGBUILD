@@ -3,7 +3,7 @@
 _realname=cargo-c
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=0.9.31
+pkgver=0.10.2
 pkgrel=1
 pkgdesc='A cargo subcommand to build and install C-ABI compatibile dynamic and static libraries (mingw-w64)'
 arch=('any')
@@ -15,17 +15,18 @@ msys2_references=(
 )
 license=('spdx:MIT')
 depends=("${MINGW_PACKAGE_PREFIX}-sqlite3"
-         "${MINGW_PACKAGE_PREFIX}-libssh2"
-         "${MINGW_PACKAGE_PREFIX}-libgit2")
+         "${MINGW_PACKAGE_PREFIX}-libssh2")
+         #"${MINGW_PACKAGE_PREFIX}-libgit2") uncomment after `git2` will be updated
 makedepends=("${MINGW_PACKAGE_PREFIX}-rust"
              "${MINGW_PACKAGE_PREFIX}-pkgconf"
              "${MINGW_PACKAGE_PREFIX}-openssl")
+options=('!strip')
 source=("https://github.com/lu-zero/cargo-c/archive/v${pkgver}/${_realname}-${pkgver}.tar.gz"
-        "${_realname}-${pkgver}.Cargo.lock"::"https://github.com/lu-zero/cargo-c/releases/download/v${pkgver}/Cargo.lock"
+        "${_realname}-${pkgver}.Cargo.lock"::"https://github.com/lu-zero/cargo-c/releases/download/pre-${pkgver}/Cargo.lock"
         001-add-lib-prefix-on-windows-gnu.patch)
-sha256sums=('4a04db8fb17a55db403bc59572f05475a477fece7ab08cfb2de970e188b80b83'
-            'd7960d508be22b1c050003970be0a1fa0b7ef6f3088fe6d29b330413a718a1ea'
-            'b749ffdb37eb6016dca37c41c2d644156bbd4a7d8ffaa7bc18c7813f7af646c0')
+sha256sums=('0217c26fee99f3af867ce52719a39349d19ec6cfac084eea3901f8046f4607c6'
+            'ec3e91c777cb654b232e841a86e21d311fb827c0541d97e7fe0f2e38ebda47da'
+            '6953c5161a4b03a5c4919e31178011f6d9eb93548055c521348a067397cb9290')
 
 prepare() {
     cp "${srcdir}/${_realname}-${pkgver}.Cargo.lock" "${_realname}-${pkgver}/Cargo.lock"
@@ -33,12 +34,12 @@ prepare() {
 
     patch -p1 -i "${srcdir}"/001-add-lib-prefix-on-windows-gnu.patch
 
+    # cargo update -p git2 --precise 0.19.0
     cargo fetch --locked --target "$(rustc -vV | sed -n 's/host: //p')"
 }
 
 _env() {
-    export LIBZ_SYS_STATIC=0
-    export LIBGIT2_NO_VENDOR=1
+    # export LIBGIT2_NO_VENDOR=1
     export OPENSSL_NO_VENDOR=1
     export LIBSSH2_SYS_USE_PKG_CONFIG=1
     export LIBSQLITE3_SYS_USE_PKG_CONFIG=1
@@ -48,14 +49,14 @@ build() {
     cd "${srcdir}/${_realname}-${pkgver}"
 
     _env
-    cargo build --release --frozen
+    cargo build --frozen --profile release-strip
 }
 
 check() {
     cd "${srcdir}/${_realname}-${pkgver}"
 
     _env
-    cargo test --release --frozen
+    cargo test --frozen --profile release-strip
 }
 
 package() {
@@ -67,7 +68,8 @@ package() {
     --offline \
     --no-track \
     --path . \
-    --root "${pkgdir}${MINGW_PREFIX}"
+    --root "${pkgdir}${MINGW_PREFIX}" \
+    --profile release-strip
 
     install -Dm644 "LICENSE" -t "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}"
 }

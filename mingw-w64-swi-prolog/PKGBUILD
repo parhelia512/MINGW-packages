@@ -2,44 +2,37 @@
 
 _realname=swi-prolog
 pkgbase=mingw-w64-${_realname}
-pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=9.2.2
-pkgrel=1
+pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
+pkgver=9.2.5
+pkgrel=2
 pkgdesc="Prolog environment (mingw-w64)"
 arch=(any)
 mingw_arch=('mingw64' 'ucrt64' 'clang64')
 url="https://www.swi-prolog.org/"
-msys2_references=(
-  "cpe: cpe:/a:swi-prolog:swi-prolog"
-)
+msys2_references=("cpe: cpe:/a:swi-prolog:swi-prolog")
 license=('spdx:BSD-2-Clause')
 depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs"
+         "${MINGW_PACKAGE_PREFIX}-gmp"
          "${MINGW_PACKAGE_PREFIX}-libwinpthread-git"
-         "${MINGW_PACKAGE_PREFIX}-zlib"
-         "${MINGW_PACKAGE_PREFIX}-gmp")
-optdepends=("${MINGW_PACKAGE_PREFIX}-libyaml: yaml support"
-            "${MINGW_PACKAGE_PREFIX}-db: support for Berkeley db"
+         "${MINGW_PACKAGE_PREFIX}-zlib")
+optdepends=("${MINGW_PACKAGE_PREFIX}-db: support for Berkeley db"
+            "${MINGW_PACKAGE_PREFIX}-libarchive: libarchive support"
+            "${MINGW_PACKAGE_PREFIX}-libyaml: yaml support"
+            "${MINGW_PACKAGE_PREFIX}-openssl: Crypto/SSL support"
             "${MINGW_PACKAGE_PREFIX}-pcre2: support for regular expressions"
             "${MINGW_PACKAGE_PREFIX}-python: python interface")
 makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
-             "${MINGW_PACKAGE_PREFIX}-gmp"
              "${MINGW_PACKAGE_PREFIX}-cmake"
              "${MINGW_PACKAGE_PREFIX}-ninja"
+             "${MINGW_PACKAGE_PREFIX}-pkgconf"
+             "${MINGW_PACKAGE_PREFIX}-db"
              "${MINGW_PACKAGE_PREFIX}-libarchive"
              "${MINGW_PACKAGE_PREFIX}-libyaml"
-             "${MINGW_PACKAGE_PREFIX}-db"
+             "${MINGW_PACKAGE_PREFIX}-openssl"
              "${MINGW_PACKAGE_PREFIX}-pcre2"
-             "${MINGW_PACKAGE_PREFIX}-pkgconf")
-source=("https://www.swi-prolog.org/download/stable/src/swipl-${pkgver}.tar.gz"
-        "01-plhome.patch")
-
-sha256sums=('896fd51196fd3becd574486da75a924f272e8d63332459292b305986cf101fc3'
-            '78aba8c14b2e32d96381e751783f6c529e10fcaca73b60c449512e6677bdd684')
-
-prepare() {
-  cd ${srcdir}/swipl-${pkgver}
-  patch -p1 < ${srcdir}/01-plhome.patch
-}
+             "${MINGW_PACKAGE_PREFIX}-python")
+source=("https://www.swi-prolog.org/download/stable/src/swipl-${pkgver}.tar.gz")
+sha256sums=('b9f40771906c7e04be80ae4cfaa4463aeb44c52010a478edd8c7a4c022fe8781')
 
 build() {
   mkdir -p "${srcdir}/build-${MSYSTEM}" && cd "${srcdir}/build-${MSYSTEM}"
@@ -55,17 +48,29 @@ build() {
   "${MINGW_PREFIX}"/bin/cmake \
     -G Ninja \
     -DCMAKE_INSTALL_PREFIX="${MINGW_PREFIX}" \
+    -DCMAKE_DLL_NAME_WITH_SOVERSION=ON \
     -DMSYS2=1 \
     "${extra_config[@]}" \
     -DUSE_GMP=ON \
     -DSWIPL_PACKAGES_JAVA=OFF \
+    -DSWIPL_PACKAGES_ODBC=OFF \
     -DSWIPL_PACKAGES_X=OFF \
     -DINSTALL_DOCUMENTATION=OFF \
-    -DVMI_FUNCTIONS=ON \
+    -DBUILD_TESTING=OFF \
+    -DINSTALL_TESTS=OFF \
     -DSWIPL_{SHARED,STATIC}_LIB=ON \
+    -DPython_EXECUTABLE=${MINGW_PREFIX}/bin/python \
     ../swipl-${pkgver}
 
   "${MINGW_PREFIX}"/bin/cmake.exe --build .
+}
+
+check() {
+  cd "${srcdir}"/build-${MSYSTEM}
+  "${MINGW_PREFIX}"/bin/cmake.exe -DBUILD_TESTING=ON ../swipl-${pkgver}
+  "${MINGW_PREFIX}"/bin/cmake.exe --build .
+
+  PYTHONHOME="${MINGW_PREFIX}" "${MINGW_PREFIX}"/bin/ctest
 }
 
 package() {
@@ -82,10 +87,5 @@ package() {
     sed -s "s|${MINGW_PREFIX}/lib|\${prefix}/lib|g" -i "${pcfile}"
   done
 
-  install -Dm644 "${srcdir}/swipl-${pkgver}/LICENSE" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/LICENSE"
-}
-
-check() {
-  cd "${srcdir}/build-${MSYSTEM}"
-  "${MINGW_PREFIX}"/bin/cmake.exe --build . --target test
+  install -Dm644 "${srcdir}"/swipl-${pkgver}/LICENSE "${pkgdir}"${MINGW_PREFIX}/share/licenses/${_realname}/LICENSE
 }

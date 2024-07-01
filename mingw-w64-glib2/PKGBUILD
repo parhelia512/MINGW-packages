@@ -3,10 +3,13 @@
 # Contributor: Renato Silva <br.renatosilva@gmail.com>
 # Contributor: Ray Donnelly <mingw.android@gmail.com>
 
+# Disable this for bootstrapping
+_enable_gir=yes
+
 _realname=glib2
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=2.80.0
+pkgver=2.80.3
 pkgrel=1
 url="https://gitlab.gnome.org/GNOME/glib"
 msys2_references=(
@@ -26,10 +29,12 @@ depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs"
 makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
              "${MINGW_PACKAGE_PREFIX}-meson"
              "${MINGW_PACKAGE_PREFIX}-gettext-tools"
+             $([[ "$_enable_gir" == "yes" ]] && echo "${MINGW_PACKAGE_PREFIX}-gobject-introspection")
              "${MINGW_PACKAGE_PREFIX}-pkgconf"
              "${MINGW_PACKAGE_PREFIX}-python-setuptools"
              "${MINGW_PACKAGE_PREFIX}-python-docutils")
 source=("https://download.gnome.org/sources/glib/${pkgver%.*}/glib-${pkgver}.tar.xz"
+        https://gitlab.gnome.org/GNOME/glib/-/commit/7e69f88480a4bf8d9653efd0310c4c25390a0c8b.patch
         0001-Update-g_fopen-g_open-and-g_creat-to-open-with-FILE_.patch
         0002-disable_glib_compile_schemas_warning.patch
         0004-disable-explicit-ms-bitfields.patch
@@ -37,7 +42,8 @@ source=("https://download.gnome.org/sources/glib/${pkgver%.*}/glib-${pkgver}.tar
         gio-querymodules.hook.in
         pyscript2exe.py)
 noextract=("glib-${pkgver}.tar.xz")
-sha256sums=('8228a92f92a412160b139ae68b6345bd28f24434a7b5af150ebe21ff587a561d'
+sha256sums=('3947a0eaddd0f3613d0230bb246d0c69e46142c19022f5c4b1b2e3cba236d417'
+            '4902e5748c6954ed38f690f27954db96709e705ff83bbdb4ebf7392a21f65824'
             '51d02360a1ee978fd45e77b84bca9cfbcf080d91986b5c0efe0732779c6a54ec'
             '396c25cfd740ffbb72209133c7b9453173167577265a4bb14502678de8d5a8f9'
             '48e94a9e61f8db9a2dc66556f12c725efe5e247a9ddc5b491f8cb8310a387293'
@@ -58,9 +64,11 @@ prepare() {
   tar -xf "glib-${pkgver}.tar.xz" || true
   cd "${srcdir}/glib-${pkgver}"
 
-  apply_patch_with_msg 0001-Update-g_fopen-g_open-and-g_creat-to-open-with-FILE_.patch
-  apply_patch_with_msg 0002-disable_glib_compile_schemas_warning.patch
-  apply_patch_with_msg 0004-disable-explicit-ms-bitfields.patch
+  apply_patch_with_msg \
+    7e69f88480a4bf8d9653efd0310c4c25390a0c8b.patch \
+    0001-Update-g_fopen-g_open-and-g_creat-to-open-with-FILE_.patch \
+    0002-disable_glib_compile_schemas_warning.patch \
+    0004-disable-explicit-ms-bitfields.patch
 }
 
 build() {
@@ -85,22 +93,26 @@ build() {
     -Dintrospection=disabled \
     "../glib-${pkgver}"
 
+  # https://gitlab.gnome.org/GNOME/glib/-/issues/3370
+  ninja glib/gspawn-win64-helper-console.exe || ninja glib/gspawn-win32-helper-console.exe || true
   ${MINGW_PREFIX}/bin/meson.exe compile
 
   msg "Build shared version"
   mkdir "${srcdir}"/build-${MSYSTEM}-shared && cd "${srcdir}"/build-${MSYSTEM}-shared
 
   MSYS2_ARG_CONV_EXCL="--prefix=" \
-  ${MINGW_PREFIX}/bin/meson.exe \
+  ${MINGW_PREFIX}/bin/meson.exe setup \
     -Dlibelf=disabled \
     --prefix="${MINGW_PREFIX}" \
     "${extra_config[@]}" \
     --wrap-mode=nodownload \
     --auto-features=enabled \
     -Ddefault_library=shared \
-    -Dintrospection=disabled \
+    $([[ "$_enable_gir" == "yes" ]] || echo "-Dintrospection=disabled") \
     "../glib-${pkgver}"
 
+  # https://gitlab.gnome.org/GNOME/glib/-/issues/3370
+  ninja glib/gspawn-win64-helper-console.exe || ninja glib/gspawn-win32-helper-console.exe || true
   ${MINGW_PREFIX}/bin/meson.exe compile
 }
 

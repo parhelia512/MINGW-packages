@@ -3,7 +3,7 @@
 _realname=libproxy
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=0.5.4
+pkgver=0.5.7
 pkgrel=1
 pkgdesc="A library that provides automatic proxy configuration management (mingw-w64)"
 arch=('any')
@@ -14,20 +14,21 @@ msys2_references=(
 )
 license=('spdx:LGPL-2.1-or-later')
 depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs"
+         "${MINGW_PACKAGE_PREFIX}-gettext-runtime"
          "${MINGW_PACKAGE_PREFIX}-glib2"
          "${MINGW_PACKAGE_PREFIX}-curl"
          "${MINGW_PACKAGE_PREFIX}-duktape"
-         "${MINGW_PACKAGE_PREFIX}-gobject-introspection"
          "${MINGW_PACKAGE_PREFIX}-gsettings-desktop-schemas")
 makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
              "${MINGW_PACKAGE_PREFIX}-meson"
              "${MINGW_PACKAGE_PREFIX}-pkgconf"
              "${MINGW_PACKAGE_PREFIX}-ninja"
+             "${MINGW_PACKAGE_PREFIX}-gobject-introspection"
              "${MINGW_PACKAGE_PREFIX}-vala")
 checkdepends=("${MINGW_PACKAGE_PREFIX}-libsoup3")
-source=("${_realname}-${pkgver}.tar.gz::https://github.com/libproxy/libproxy/archive/refs/tags/${pkgver}.tar.gz"
+source=("https://github.com/libproxy/libproxy/archive/${pkgver}/${_realname}-${pkgver}.tar.gz"
         "0001-install-backend-bindir.patch")
-sha256sums=('a6e2220349b2025de9b6d9d7f8bb347bf0c728f02a921761ad5f9f66c7436de9'
+sha256sums=('ca64b28a014cffde43f4052ec78b25a8a0f1aa4d78da721c605d64b1591e78dd'
             '659e9f5ab6097cff46b04e49b833c89422c2b7fbd6e26baf370fac7159c0aecf')
 
 prepare() {

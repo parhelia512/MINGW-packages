@@ -1,0 +1,96 @@
+# Maintainer: Maksim Bondarenkov <maksapple2306@gmail.com>
+
+_realname=uv
+pkgbase=mingw-w64-${_realname}
+pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}"
+         "${MINGW_PACKAGE_PREFIX}-python-${_realname}")
+pkgver=0.2.18
+pkgrel=1
+pkgdesc='An extremely fast Python package installer and resolver, written in Rust (mingw-w64)'
+arch=('any')
+mingw_arch=('ucrt64' 'clang64' 'clangarm64')
+url="https://github.com/astral-sh/uv"
+license=('spdx:Apache-2.0 OR MIT')
+msys2_references=(
+  'archlinux: uv'
+)
+depends=("${MINGW_PACKAGE_PREFIX}-bzip2"
+         "${MINGW_PACKAGE_PREFIX}-zstd")
+makedepends=("${MINGW_PACKAGE_PREFIX}-rust"
+             "${MINGW_PACKAGE_PREFIX}-python-maturin"
+             "${MINGW_PACKAGE_PREFIX}-python-installer"
+             "${MINGW_PACKAGE_PREFIX}-cmake"
+             "${MINGW_PACKAGE_PREFIX}-zlib"
+             "${MINGW_PACKAGE_PREFIX}-openssl"
+             "${MINGW_PACKAGE_PREFIX}-pkgconf")
+options=('!strip' '!lto')
+source=("https://github.com/astral-sh/uv/archive/${pkgver}/${_realname}-${pkgver}.tar.gz"
+        "zstd-sys.tar.gz::https://crates.io/api/v1/crates/zstd-sys/2.0.10+zstd.1.5.6/download"
+        "bzip2-sys.tar.gz::https://crates.io/api/v1/crates/bzip2-sys/0.1.11+1.0.8/download"
+        "bzip2-use-pkgconfig.patch"
+        "link-zstd-dynamically.patch")
+sha256sums=('a595f8abeac971c011fe0d803fcd97b075dbf2453adc0f766adabba6a63cef13'
+            'c253a4914af5bafc8fa8c86ee400827e83cf6ec01195ec1f1ed8441bf00d65aa'
+            '736a955f3fa7875102d57c82b8cac37ec45224a07fd32d58f9f7a186b6cd4cdc'
+            'f73309fb98b89b2085bccee6ffb66820082628d096bc989922b25d33a1f5f378'
+            '48f4900ceb02d3aaf9a1020f33d56629156e96759f456c0e7ca18bfcf910767b')
+
+_env() {
+  export PKG_CONFIG_ALL_DYNAMIC=1
+  export ZSTD_SYS_USE_PKG_CONFIG=1
+  export WINAPI_NO_BUNDLED_LIBRARIES=1
+}
+
+prepare() {
+  cd "${srcdir}/${_realname}-${pkgver}"
+  sed -i '/\[patch\.crates-io\]/a zstd-sys = { path = "../zstd-sys-2.0.10+zstd.1.5.6" }\nbzip2-sys = { path = "../bzip2-sys-0.1.11+1.0.8" }' Cargo.toml
+  patch -d "../zstd-sys-2.0.10+zstd.1.5.6" -i "${srcdir}/link-zstd-dynamically.patch"
+  patch -d "../bzip2-sys-0.1.11+1.0.8" -i "${srcdir}/bzip2-use-pkgconfig.patch"
+
+  rm -f rust-toolchain.toml
+  cargo update -p zstd-sys -p bzip2-sys
+  cargo fetch --locked
+}
+
+build() {
+  cd "${srcdir}/${_realname}-${pkgver}"
+
+  _env
+  maturin build --frozen --strip --release --all-features
+}
+
+package_uv() {
+  cd "${srcdir}/${_realname}-${pkgver}"
+
+  install -Dm755 target/release/uv "${pkgdir}${MINGW_PREFIX}/bin/uv"
+
+  local _complete="./target/release/uv --generate-shell-completion"
+  $_complete bash | install -Dm644 /dev/stdin "${pkgdir}${MINGW_PREFIX}/share/bash-completion/completions/uv"
+  $_complete fish | install -Dm644 /dev/stdin "${pkgdir}${MINGW_PREFIX}/share/fish/vendor_completions.d/uv.fish"
+  $_complete zsh | install -Dm644 /dev/stdin "${pkgdir}${MINGW_PREFIX}/share/zsh/site-functions/_uv"
+
+  install -Dm644 LICENSE-{MIT,APACHE} -t "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/"
+}
+
+package_python-uv() {
+  cd "${srcdir}/${_realname}-${pkgver}"
+
+  depends=("${MINGW_PACKAGE_PREFIX}-python" "${MINGW_PACKAGE_PREFIX}-uv")
+
+  MSYS2_ARG_CONV_EXCL="--prefix=" \
+    ${MINGW_PREFIX}/bin/python -m installer --prefix=${MINGW_PREFIX} \
+    --destdir="${pkgdir}" target/wheels/*.whl
+
+  rm -rf "${pkgdir}${MINGW_PREFIX}/bin"
+}
+
+# template start; name=mingw-w64-splitpkg-wrappers; version=1.0;
+# vim: set ft=bash :
+
+# generate wrappers
+for _name in "${pkgname[@]}"; do
+  _short="package_${_name#${MINGW_PACKAGE_PREFIX}-}"
+  _func="$(declare -f "${_short}")"
+  eval "${_func/#${_short}/package_${_name}}"
+done
+# template end;

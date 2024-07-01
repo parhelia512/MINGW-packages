@@ -12,29 +12,46 @@ conflicts=("${MINGW_PACKAGE_PREFIX}-python3-cx_Freeze"
            "${MINGW_PACKAGE_PREFIX}-python-cx_Freeze")
 replaces=("${MINGW_PACKAGE_PREFIX}-python3-cx_Freeze"
           "${MINGW_PACKAGE_PREFIX}-python-cx_Freeze")
-pkgver=6.15.16
+pkgver=7.1.1
 pkgrel=1
 pkgdesc="Creates standalone executables from Python scripts, with the same performance (mingw-w64)"
 arch=('any')
-mingw_arch=('mingw64' 'ucrt64' 'clang64')
+mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64')
 msys2_references=(
   'pypi: cx-Freeze'
 )
 license=('PSF')
 url="https://github.com/marcelotduarte/cx_Freeze/"
 options=(!strip)
-depends=("${MINGW_PACKAGE_PREFIX}-python"
-         "${MINGW_PACKAGE_PREFIX}-python-setuptools"
-         "${MINGW_PACKAGE_PREFIX}-python-wheel"
-         "${MINGW_PACKAGE_PREFIX}-python-cx-logging"
-         "${MINGW_PACKAGE_PREFIX}-python-lief")
-makedepends=("${MINGW_PACKAGE_PREFIX}-python-build"
-             "${MINGW_PACKAGE_PREFIX}-python-installer"
-             "${MINGW_PACKAGE_PREFIX}-python-wheel"
-             "${MINGW_PACKAGE_PREFIX}-cc"
-             "${MINGW_PACKAGE_PREFIX}-tools")
-source=(https://pypi.io/packages/source/c/cx_Freeze/cx_Freeze-${pkgver}.tar.gz)
-sha256sums=('c63991886ff2a5319f8f0d07c0349a6bbe1a65b5f320f8b9243888e63c9a4a22')
+depends=(
+  "${MINGW_PACKAGE_PREFIX}-python"
+  "${MINGW_PACKAGE_PREFIX}-python-setuptools"
+  "${MINGW_PACKAGE_PREFIX}-python-wheel"
+  "${MINGW_PACKAGE_PREFIX}-python-cx-logging"
+  "${MINGW_PACKAGE_PREFIX}-python-lief"
+)
+makedepends=(
+  "${MINGW_PACKAGE_PREFIX}-python-build"
+  "${MINGW_PACKAGE_PREFIX}-python-installer"
+  "${MINGW_PACKAGE_PREFIX}-python-wheel"
+  "${MINGW_PACKAGE_PREFIX}-cc"
+  "${MINGW_PACKAGE_PREFIX}-tools"
+)
+checkdepends=(
+  "${MINGW_PACKAGE_PREFIX}-python-pytest"
+  "${MINGW_PACKAGE_PREFIX}-python-pytest-cov"
+  "${MINGW_PACKAGE_PREFIX}-python-pytest-datafiles"
+  "${MINGW_PACKAGE_PREFIX}-python-pytest-mock"
+  "${MINGW_PACKAGE_PREFIX}-python-pytest-timeout"
+  "${MINGW_PACKAGE_PREFIX}-python-pytest-xdist"
+  "${MINGW_PACKAGE_PREFIX}-python-psutil"
+)
+source=(
+    https://pypi.io/packages/source/c/cx_Freeze/cx_freeze-${pkgver}.tar.gz
+)
+sha256sums=(
+    '335c30bad0e3e653655f230993308458bedc997baf5b7a995e8641deba2eb287'
+)
 
 prepare() {
   cd "${srcdir}"/cx_Freeze-${pkgver}
@@ -50,10 +67,17 @@ build() {
   ${MINGW_PREFIX}/bin/python -m build --wheel --skip-dependency-check --no-isolation
 }
 
+check() {
+  cd python-${_realname}-${MSYSTEM}
+  ${MINGW_PREFIX}/bin/pip install cx_Freeze -f dist --no-deps --no-index
+  ${MINGW_PREFIX}/bin/pytest -nauto --cov="cx_Freeze" --cov-report=xml
+}
+
 package() {
   cd python-${_realname}-${MSYSTEM}
   MSYS2_ARG_CONV_EXCL="--prefix=" \
     ${MINGW_PREFIX}/bin/python -m installer --prefix=${MINGW_PREFIX} \
     --destdir="${pkgdir}" dist/*.whl
+  install -Dm644 LICENSE.md "${pkgdir}${MINGW_PREFIX}/share/licenses/python-${_realname}/LICENSE.md"
 }
 

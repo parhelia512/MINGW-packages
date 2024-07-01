@@ -3,8 +3,8 @@
 _realname=doxygen
 pkgbase=mingw-w64-${_realname}
 pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
-pkgver=1.10.0
-pkgrel=3
+pkgver=1.11.0
+pkgrel=2
 pkgdesc="A documentation system for C++, C, Java, IDL and PHP (mingw-w64)"
 arch=('any')
 mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64' 'clang32' 'clangarm64')
@@ -20,6 +20,7 @@ depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs"
          "${MINGW_PACKAGE_PREFIX}-fmt"
          "${MINGW_PACKAGE_PREFIX}-libiconv"
          "${MINGW_PACKAGE_PREFIX}-sqlite3"
+         "${MINGW_PACKAGE_PREFIX}-spdlog"
          "${MINGW_PACKAGE_PREFIX}-xapian-core")
 makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
              "${MINGW_PACKAGE_PREFIX}-cmake"
@@ -27,14 +28,13 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
              "${MINGW_PACKAGE_PREFIX}-pkgconf"
              "${MINGW_PACKAGE_PREFIX}-clang-tools-extra"
              "${MINGW_PACKAGE_PREFIX}-python"
-             "${MINGW_PACKAGE_PREFIX}-spdlog"
              $([[ ${CARCH} == i686 ]] || echo "${MINGW_PACKAGE_PREFIX}-qt6-base"))
 if [[ ${CARCH} != i686 ]]; then
   optdepends=("${MINGW_PACKAGE_PREFIX}-qt6-base: for doxywizard")
 fi
 source=(https://github.com/doxygen/doxygen/archive/Release_${pkgver//./_}/${_realname}-${pkgver}.tar.gz
         cmake-mingw.patch)
-sha256sums=('795692a53136ca9bb9a6cd72656968af7858a78be7d6d011e12ab1dce6b9533c'
+sha256sums=('1fea49c69e51fec3dd2599947f6d48d9b1268bd5115b1bb08dffefc1fd5d19ee'
             '7a74cdd4cfaba3f5521b5179a91eec4ad96c1da89534576be356238809df4aa6')
 
 apply_patch_with_msg() {

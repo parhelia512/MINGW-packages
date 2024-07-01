@@ -28,7 +28,7 @@ pkgname=("${MINGW_PACKAGE_PREFIX}-llvm"
          "${MINGW_PACKAGE_PREFIX}-compiler-rt"
          $( (( _clangprefix )) && echo "${MINGW_PACKAGE_PREFIX}-gcc-compat" )
          "${MINGW_PACKAGE_PREFIX}-lld")
-_version=18.1.3
+_version=18.1.8
 _rc=""
 _tag=llvmorg-${_version}${_rc}
 pkgver=${_version}${_rc/-/}
@@ -79,19 +79,19 @@ source=("${_url}/llvm-${pkgver}.src.tar.xz"{,.sig}
         "0303-ignore-new-bfd-options.patch"
         # 0401-0499 -> clang-tools-extra
         )
-sha256sums=('fa6db8951f5ef576ac6bad43d5e1ed83962754538c998fbfa0397cd4521abc00'
+sha256sums=('f68cf90f369bc7d0158ba70d860b0cb34dbc163d6ff0ebc6cfa5e515b9b2e28d'
             'SKIP'
-            'e43e1729713ac0241aa026fa2f98bb54e74a196a6fed60ab4819134a428eb6d8'
+            '5724fe0a13087d5579104cedd2f8b3bc10a212fb79a0fcdac98f4880e19f4519'
             'SKIP'
-            'e59a804b95e29fcc0b8e496065b0e7b9c9225efaea48294b31c03f1624dedc4e'
+            'e58877fcd95ed106824bd1a31276dd17ed0c53adcd60ca75289eac0654f0a7f1'
             'SKIP'
-            '9a7df9300413696b0c4f7ff1e2729cb82aca375f35c05d698c44f26a4edf1c27'
+            'e054e99a9c9240720616e927cb52363abbc8b4f1ef0286bad3df79ec8fdf892f'
             'SKIP'
-            'ea4c325c272ef1022c6517335e0c55d6331cbb00c3b67634b9df1bce011d486e'
+            '800e6805fb613eb8428f7a199f6d06c4c19f78f2db69157a129bb04fc1c99769'
             'SKIP'
-            'acfecb615d41c5b1a0a31e15324994ca06f7a3f37d8958d719b20de0d217b71b'
+            '59badef592dd34893cd319d42b323aaa990b452d05c7180ff20f23ab1b41e837'
             'SKIP'
-            'ba1de46e740133d361c0d5d1387befa309f0b60f81bc2bf003252bebdcf9eada'
+            'b76b810f3d3dc5d08e83c4236cb6e395aa9bd5e3ea861e8c319b216d093db074'
             'SKIP'
             'eb03df53671df6627768141b3aaa76abe176a14e5e47911c97bec544387c4aff'
             '0aff3a85d70ae437dfc634fe40db506bf5701403049284ffbdb931135ae8a483'
@@ -302,10 +302,10 @@ build() {
 }
 
 check() {
- cd "${srcdir}"/build-${MSYSTEM}
- # Remove || true once testcase doesn't cause failures.
-#  make check || true
-#  make check-clang || true
+  cd "${srcdir}"/build-${MSYSTEM}
+  # Remove || true once testcase doesn't cause failures.
+  # make check || true
+  # make check-clang || true
   ${MINGW_PREFIX}/bin/cmake.exe -DLLVM_INCLUDE_TESTS=ON ../llvm
   ${MINGW_PREFIX}/bin/cmake.exe --build .
   ${MINGW_PREFIX}/bin/cmake.exe --build . -- check-lld || true
@@ -407,6 +407,7 @@ package_gcc-compat() {
   depends=("${MINGW_PACKAGE_PREFIX}-clang=${pkgver}-${pkgrel}")
   provides=("${MINGW_PACKAGE_PREFIX}-gcc")
   conflicts=("${MINGW_PACKAGE_PREFIX}-gcc")
+  groups=()
 
   mkdir -p "${pkgdir}"${MINGW_PREFIX}/bin
   local _alias

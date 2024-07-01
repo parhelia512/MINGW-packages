@@ -3,7 +3,7 @@
 _realname=fastfetch
 pkgbase="mingw-w64-${_realname}"
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=2.9.0
+pkgver=2.17.1
 pkgrel=1
 pkgdesc="A neofetch-like tool for fetching system information and displaying them in a pretty way (mingw-w64)"
 arch=('any')
@@ -16,11 +16,12 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
              "${MINGW_PACKAGE_PREFIX}-pkgconf"
              "${MINGW_PACKAGE_PREFIX}-vulkan-loader"
              "${MINGW_PACKAGE_PREFIX}-vulkan-headers"
-             "${MINGW_PACKAGE_PREFIX}-opencl-icd")
+             "${MINGW_PACKAGE_PREFIX}-opencl-icd"
+             "${MINGW_PACKAGE_PREFIX}-cppwinrt")
 optdepends=("${MINGW_PACKAGE_PREFIX}-vulkan-loader: For Vulkan support detection"
             "${MINGW_PACKAGE_PREFIX}-opencl-icd: For OpenCL support detection")
 source=("https://github.com/fastfetch-cli/fastfetch/archive/${pkgver}/${_realname}-${pkgver}.tar.gz")
-sha256sums=('ae0b0d0bf4d4569fb5dff6b1d67bc8d2091ed4a9aec6ab43c2c73430dff1f9dc')
+sha256sums=('a38969ebb757070db5dace8a42f874d8898a7232da64c73fc86c60a2c9da9be0')
 
 build() {
   declare -a extra_config

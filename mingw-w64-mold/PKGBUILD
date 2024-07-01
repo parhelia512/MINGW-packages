@@ -3,7 +3,7 @@
 _realname=mold
 pkgbase=mingw-w64-${_realname}
 pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
-pkgver=2.30.0
+pkgver=2.32.0
 pkgrel=1
 pkgdesc="A Modern Linker (mingw-w64)"
 arch=('any')
@@ -15,23 +15,28 @@ msys2_references=(
 )
 depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs"
          "${MINGW_PACKAGE_PREFIX}-libwinpthread-git"
-         "${MINGW_PACKAGE_PREFIX}-mimalloc"
          "${MINGW_PACKAGE_PREFIX}-tbb"
          "${MINGW_PACKAGE_PREFIX}-zlib"
-         "${MINGW_PACKAGE_PREFIX}-zstd")
+         "${MINGW_PACKAGE_PREFIX}-zstd"
+         "${MINGW_PACKAGE_PREFIX}-dlfcn")
 makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
              "${MINGW_PACKAGE_PREFIX}-cmake"
              "${MINGW_PACKAGE_PREFIX}-ninja")
 source=("${_realname}-${pkgver}.tar.gz::https://github.com/rui314/mold/archive/v${pkgver}.tar.gz"
-        "002-cmake-copy-instead-symlink.patch")
-sha256sums=('6E5178CCAFE828FDB4BA0DD841D083FF6004D3CB41E56485143EB64C716345FD'
-            '0c0c755132035defbe857977fd1c0dcd4251f4a241506f1f249ce5be3c534576')
+        "002-cmake-copy-instead-symlink.patch"
+        "003-support-lto.patch::https://github.com/rui314/mold/pull/1287.patch")
+sha256sums=('4b7e4146ea0f52be9adae8b417399f3676a041e65b55e3f25f088120d30a320b'
+            '0c0c755132035defbe857977fd1c0dcd4251f4a241506f1f249ce5be3c534576'
+            '79fb136fa1fb70af1def02b59d12fb459f8dc654ca2804db6406ad5cd8971652')
 noextract=(${_realname}-${pkgver}.tar.gz)
 
 prepare() {
   tar -xzf ${_realname}-${pkgver}.tar.gz || true
   cd "${srcdir}"/${_realname}-${pkgver}
+
   patch -p1 -i "${srcdir}"/002-cmake-copy-instead-symlink.patch
+  # https://github.com/rui314/mold/pull/1287
+  patch -p1 -i "${srcdir}"/003-support-lto.patch
 }
 
 build() {
@@ -50,7 +55,7 @@ build() {
       -DCMAKE_INSTALL_PREFIX="${MINGW_PREFIX}" \
       -DCMAKE_INSTALL_LIBEXECDIR='lib' \
       "${_extra_config[@]}" \
-      -DMOLD_USE_SYSTEM_MIMALLOC=ON \
+      -DMOLD_USE_MIMALLOC=OFF \
       -DMOLD_USE_SYSTEM_TBB=ON \
       -DMOLD_USE_MOLD=OFF \
       -DBUILD_TESTING=OFF \
