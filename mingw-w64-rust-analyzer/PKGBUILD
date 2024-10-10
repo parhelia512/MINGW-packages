@@ -3,7 +3,7 @@
 _realname=rust-analyzer
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-_pkgver=2024-09-23
+_pkgver=2024-10-07
 pkgver=${_pkgver//-}
 pkgrel=1
 pkgdesc="A Rust compiler front-end for IDEs (mingw-w64)"
@@ -16,7 +16,7 @@ conflicts=("${MINGW_PACKAGE_PREFIX}-rust<1.80.0-2")
 depends=("${MINGW_PACKAGE_PREFIX}-rust-src")
 makedepends=('git')
 source=("git+${msys2_repository_url}.git#tag=${_pkgver}")
-sha256sums=('56c5b5dd8a222cbb92904c5d58730924208c2b3a4fbceeb85014e7bf4fd27d1a')
+sha256sums=('198138b749f059815c5ead2c6bae6cc2fd11e5d67a18f130056c6a9274ca1c38')
 
 prepare() {
   cd "${_realname}"
