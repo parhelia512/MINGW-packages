@@ -34,22 +34,21 @@ sha256sums=('d621e8bdd4b573918c8145f7ae61817d1be9deb4c8d2328a65cea8e11d783bd6'
 
 
 prepare() {
-  cd ${srcdir}/${_realname}-${pkgver}
-  patch -p0 -i ${srcdir}/win_use_raise_rather_than_kill.patch
-  patch -p0 -i ${srcdir}/msvc_invalid_parameter_handler.patch
-  patch -p0 -i ${srcdir}/win_signal_handling.patch
-  patch -p2 -i ${srcdir}/0001-fix-build.patch
+  cd "${srcdir}"/${_realname}-${pkgver}
+  patch -p0 -i "${srcdir}"/win_use_raise_rather_than_kill.patch
+  patch -p0 -i "${srcdir}"/msvc_invalid_parameter_handler.patch
+  patch -p0 -i "${srcdir}"/win_signal_handling.patch
+  patch -p2 -i "${srcdir}"/0001-fix-build.patch
 
   #make test cases work
   sed -i "s|case \$perms in drwx--\[-S\]---\*|case \$perms in drwx\*|" tests/init.sh
 }
 
 build() {
-  [[ -d "build-${MINGW_CHOST}" ]] && rm -rf "build-${MINGW_CHOST}"
-  mkdir -p "${srcdir}/build-${MINGW_CHOST}"
-  cd "${srcdir}/build-${MINGW_CHOST}"
+  mkdir -p "${srcdir}/build-${MSYSTEM}" && cd "${srcdir}/build-${MSYSTEM}"
 
-  ../${_realname}-${pkgver}/configure --prefix=${MINGW_PREFIX} \
+  ../${_realname}-${pkgver}/configure \
+    --prefix=${MINGW_PREFIX} \
     --build=${MINGW_CHOST} \
     --host=${MINGW_CHOST} \
     --target=${MINGW_CHOST}
@@ -58,7 +57,7 @@ build() {
 }
 
 package() {
-  cd ${srcdir}/build-${MINGW_CHOST}
+  cd "${srcdir}"/build-${MSYSTEM}
   make install DESTDIR="${pkgdir}"
 
   # Licenses

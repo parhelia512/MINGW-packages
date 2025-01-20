@@ -27,28 +27,28 @@ sha256sums=('SKIP'
 
 prepare() {
   cd ${_realname}
-  patch -p1 -i ${srcdir}/001-pep8-violations.patch
-  patch -p1 -i ${srcdir}/002-cleanup-and-bug-fixes.patch
-  patch -p1 -i ${srcdir}/003-python3-fixes.patch
-  patch -p1 -i ${srcdir}/004-add-cmake-build.patch
+  patch -p1 -i "${srcdir}"/001-pep8-violations.patch
+  patch -p1 -i "${srcdir}"/002-cleanup-and-bug-fixes.patch
+  patch -p1 -i "${srcdir}"/003-python3-fixes.patch
+  patch -p1 -i "${srcdir}"/004-add-cmake-build.patch
 
   autoreconf -fiv
 }
 
 build() {
-  [[ -d ${srcdir}/build-${MINGW_CHOST} ]] && rm -rf ${srcdir}/build-${MINGW_CHOST}
-  mkdir -p "${srcdir}/build-${MINGW_CHOST}"
-  cd "${srcdir}/build-${MINGW_CHOST}"
+  mkdir -p "${srcdir}/build-${MSYSTEM}" && cd "${srcdir}/build-${MSYSTEM}"
+
   ../${_realname}/configure \
     --prefix=${MINGW_PREFIX} \
     --build=${MINGW_CHOST} \
     --host=${MINGW_CHOST}
+
   make
 }
 
 package () {
-  cd "${srcdir}/build-${MINGW_CHOST}"
+  cd "${srcdir}/build-${MSYSTEM}"
   make DESTDIR="${pkgdir}" install
 
-  cp  ${srcdir}/${_realname}/scripts/*.py ${pkgdir}${MINGW_PREFIX}/bin/
+  cp  "${srcdir}"/${_realname}/scripts/*.py "${pkgdir}"${MINGW_PREFIX}/bin/
 }

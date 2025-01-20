@@ -36,8 +36,7 @@ prepare() {
 }
 
 build() {
-  [[ -d ${srcdir}/build-${MINGW_CHOST} ]] && rm -rf ${srcdir}/build-${MINGW_CHOST}
-  mkdir -p ${srcdir}/build-${MINGW_CHOST} && cd ${srcdir}/build-${MINGW_CHOST}
+  mkdir -p "${srcdir}"/build-${MSYSTEM} && cd "${srcdir}"/build-${MSYSTEM}
 
   CFLAGS+=" -fcommon"  # work around gcc 10 being stricter here
   MSYS2_ARG_CONV_EXCL="--prefix=" \
@@ -53,13 +52,13 @@ build() {
        --default-library both \
       ../${_realname}-${pkgver}
 
-  ninja
+  meson compile
 }
 
 package() {
-  cd "${srcdir}/build-${MINGW_CHOST}"
+  cd "${srcdir}/build-${MSYSTEM}"
 
-  DESTDIR="${pkgdir}" ninja install
+  DESTDIR="${pkgdir}" meson install
 
   install -Dm644 "${srcdir}/${_realname}-${pkgver}/COPYING" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING"
 }

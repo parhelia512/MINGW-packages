@@ -6,7 +6,7 @@ pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}"
          "${MINGW_PACKAGE_PREFIX}-${_realname}-debug")
 _qtver=6.8.1
 pkgver=${_qtver/-/}
-pkgrel=1
+pkgrel=2
 pkgdesc='Module that contains unsupported Qt 5 APIs (mingw-w64)'
 arch=(any)
 mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
@@ -49,10 +49,10 @@ package_qt6-5compat() {
               "${MINGW_PACKAGE_PREFIX}-qt6-shadertools")
   groups=("${MINGW_PACKAGE_PREFIX}-qt6")
 
-  DESTDIR=${pkgdir} ${MINGW_PREFIX}/bin/cmake --install build-${MSYSTEM}
+  DESTDIR="${pkgdir}" ${MINGW_PREFIX}/bin/cmake --install build-${MSYSTEM}
 
   # Seperate debug-info files
-  rsync -armR --remove-source-files --include="*/" --include="*.debug" --exclude="*" --prune-empty-dirs ${pkgdir}/.${MINGW_PREFIX} ${srcdir}/${MSYSTEM}-debug/
+  rsync -armR --remove-source-files --include="*/" --include="*.debug" --exclude="*" --prune-empty-dirs "${pkgdir}"/.${MINGW_PREFIX} "${srcdir}"/${MSYSTEM}-debug/
 
   install -d "$pkgdir${MINGW_PREFIX}"/share/licenses/${_realname}
   install -Dm644 $_pkgfn/LICENSES/* -t "$pkgdir${MINGW_PREFIX}"/share/licenses/${_realname}
@@ -64,7 +64,7 @@ package_qt6-5compat-debug() {
   groups=("${MINGW_PACKAGE_PREFIX}-qt6-debug")
   options=('!strip')
 
-  cp -rf ${srcdir}/${MSYSTEM}-debug${MINGW_PREFIX} "${pkgdir}"/
+  cp -rf "${srcdir}"/${MSYSTEM}-debug${MINGW_PREFIX} "${pkgdir}"/
 }
 
 # template start; name=mingw-w64-splitpkg-wrappers; version=1.0;

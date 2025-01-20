@@ -17,13 +17,13 @@ sha256sums=('1e6f093812d6130e45bdf4cb80280cb3c93d1e1833d8cf989d554d7963b7899a')
 options=(!buildflags !strip)
 
 prepare() {
-  cd ${srcdir}/Chipmunk2D-Chipmunk-${pkgver}
+  cd "${srcdir}"/Chipmunk2D-Chipmunk-${pkgver}
 }
 
 build() {
 
-  mkdir -p "${srcdir}/build-${CARCH}"
-  cd "${srcdir}/build-${CARCH}"
+  mkdir -p "${srcdir}/build-${MSYSTEM}"
+  cd "${srcdir}/build-${MSYSTEM}"
 
   MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
   ${MINGW_PREFIX}/bin/cmake \
@@ -39,6 +39,6 @@ build() {
 }
 
 package() {
-  cd "${srcdir}/build-${CARCH}"
-  make DESTDIR=${pkgdir} install
+  cd "${srcdir}/build-${MSYSTEM}"
+  make DESTDIR="${pkgdir}" install
 }

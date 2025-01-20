@@ -32,7 +32,7 @@ apply_patch_with_msg() {
 }
 
 prepare() {
-  cd ${srcdir}
+  cd "${srcdir}"
   rm -rf ${_realname}-${pkgver}
   unzip ../${_realname}-${pkgver}.zip
 
@@ -42,7 +42,6 @@ prepare() {
 }
 
 build() {
-    [[ -d "${srcdir}/build-${MSYSTEM}" ]] && rm -rf "${srcdir}/build-${MSYSTEM}"
     mkdir -p "${srcdir}/build-${MSYSTEM}" && cd "${srcdir}/build-${MSYSTEM}"
 
     declare -a extra_config
