@@ -44,13 +44,12 @@ del_file_exists() {
 
 
 prepare() {
-  cd ${srcdir}/${_realname}-${pkgver}
+  cd "${srcdir}"/${_realname}-${pkgver}
 
   apply_patch_with_msg 0001-enable-shared-on.mingw.patch
 }
 
 build() {
-  [[ -d "${srcdir}"/build-${MSYSTEM} ]] && rm -rf "${srcdir}"/build-${MSYSTEM}
   mkdir -p "${srcdir}"/build-${MSYSTEM} && cd "${srcdir}"/build-${MSYSTEM}
 
   case "${MINGW_CHOST}" in

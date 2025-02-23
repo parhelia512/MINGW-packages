@@ -26,16 +26,14 @@ sha256sums=('90843223c3a30bdb7f1eb3442373a03fee425af85a9df289cd687698ccff112f'
 
 prepare() {
   cd ${_realname}-${pkgver}
-  patch -p1 -i ${srcdir}/0001-wsock.patch
-  patch -p1 -i ${srcdir}/0002-give-cc-to-gir-scanner.all.patch
+  patch -p1 -i "${srcdir}"/0001-wsock.patch
+  patch -p1 -i "${srcdir}"/0002-give-cc-to-gir-scanner.all.patch
 
   WANT_AUTOCONF=2.69 autoreconf -fiv
 }
 
 build() {
-  [[ -d build-${MINGW_CHOST} ]] && rm -rf build-${MINGW_CHOST}
-  mkdir -p build-${MINGW_CHOST}
-  cd build-${MINGW_CHOST}
+  mkdir -p build-${MSYSTEM} && cd build-${MSYSTEM}
 
   ../${_realname}-${pkgver}/configure \
     --host=${MINGW_CHOST} \
@@ -48,8 +46,8 @@ build() {
 }
 
 package() {
-  cd "${srcdir}/build-${MINGW_CHOST}"
-  make DESTDIR=${pkgdir} install
+  cd "${srcdir}/build-${MSYSTEM}"
+  make DESTDIR="${pkgdir}" install
 
   install -Dm644 "${srcdir}/${_realname}-${pkgver}/COPYING" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING"
 }

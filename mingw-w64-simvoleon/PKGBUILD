@@ -35,7 +35,6 @@ prepare() {
 }
 
 build() {
-  [[ -d "${srcdir}/build-${MSYSTEM}" ]] && rm -rf "${srcdir}/build-${MSYSTEM}"
   mkdir -p "${srcdir}/build-${MSYSTEM}" && cd "${srcdir}/build-${MSYSTEM}"
 
   declare -a extra_config
@@ -62,7 +61,7 @@ build() {
 package() {
   cd "${srcdir}/build-${MSYSTEM}"
 
-  DESTDIR=${pkgdir} "${MINGW_PREFIX}"/bin/cmake.exe --install .
+  DESTDIR="${pkgdir}" "${MINGW_PREFIX}"/bin/cmake.exe --install .
 
   install -Dm644 "${srcdir}/${_realname}-${_realname}-${pkgver}/COPYING" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/LICENSE"
 }

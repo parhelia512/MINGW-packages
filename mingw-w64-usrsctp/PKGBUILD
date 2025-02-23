@@ -34,20 +34,19 @@ build() {
     extra_config+=("")
   fi
 
-  [[ -d "${srcdir}"/build-${CARCH} ]] && rm -rf "${srcdir}"/build-${CARCH}
-  mkdir -p "${srcdir}"/build-${CARCH} && cd "${srcdir}"/build-${CARCH}
+  mkdir -p "${srcdir}"/build-${MSYSTEM} && cd "${srcdir}"/build-${MSYSTEM}
 
   MSYS2_ARG_CONV_EXCL="--prefix=" \
   meson \
     --prefix="${MINGW_PREFIX}" \
     "${extra_config[@]}" \
     "../${_realname}-${pkgver}"
-  ninja
+  meson compile
 }
 
 package() {
-  cd "${srcdir}"/build-${CARCH}
-  DESTDIR="${pkgdir}" ninja install
+  cd "${srcdir}"/build-${MSYSTEM}
+  DESTDIR="${pkgdir}" meson install
 
   install -Dm644 "${srcdir}/${_realname}-${pkgver}/LICENSE.md" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/LICENSE.md"
 }

@@ -33,9 +33,8 @@ prepare() {
 }
 
 build() {
-  [[ -d build-${MINGW_CHOST} ]] && rm -rf build-${MINGW_CHOST}
-  mkdir -p build-${MINGW_CHOST}
-  cd build-${MINGW_CHOST}
+  mkdir -p build-${MSYSTEM} && cd build-${MSYSTEM}
+
   ../${_realname}/configure \
     --prefix=${MINGW_PREFIX} \
     --host=${MINGW_CHOST} \
@@ -49,7 +48,7 @@ build() {
 }
 
 package() {
-  cd build-${MINGW_CHOST}
+  cd build-${MSYSTEM}
   make DESTDIR="${pkgdir}" install
   install -Dm644 "${srcdir}/${_realname}/LICENSE" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/LICENSE"
 }

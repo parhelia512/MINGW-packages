@@ -31,17 +31,17 @@ pkgver() {
 }
 
 prepare() {
-  cd ${srcdir}/${_realname}
-  patch -p1 -i ${srcdir}/0001-fix-bootstrap.mingw.patch
-  patch -p1 -i ${srcdir}/0002-libmpeg2-fix-deprecated.patch
-  patch -p1 -i ${srcdir}/0003-do-not-AC_C_ALWAYS_INLINE-it-redefines-inline-breaking-mingw-w64-GCC-5.1.0-C99.patch
+  cd "${srcdir}"/${_realname}
+  patch -p1 -i "${srcdir}"/0001-fix-bootstrap.mingw.patch
+  patch -p1 -i "${srcdir}"/0002-libmpeg2-fix-deprecated.patch
+  patch -p1 -i "${srcdir}"/0003-do-not-AC_C_ALWAYS_INLINE-it-redefines-inline-breaking-mingw-w64-GCC-5.1.0-C99.patch
 
   ./bootstrap
 }
 
 build() {
-  [[ -d build-${CARCH} ]] && rm -rf build-${CARCH}
-  mkdir build-${CARCH} && cd build-${CARCH}
+  mkdir -p build-${MSYSTEM} && cd build-${MSYSTEM}
+
   ../${_realname}/configure \
     --prefix=${MINGW_PREFIX} \
     --build=${MINGW_CHOST} \
@@ -54,6 +54,6 @@ build() {
 }
 
 package() {
-  cd "${srcdir}"/build-${CARCH}
+  cd "${srcdir}"/build-${MSYSTEM}
   make DESTDIR="${pkgdir}" install
 }

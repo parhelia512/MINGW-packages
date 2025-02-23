@@ -8,8 +8,8 @@ _realname=gdal
 pkgbase=mingw-w64-${_realname,,}
 pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}"
          "${MINGW_PACKAGE_PREFIX}-python-${_realname}")
-pkgver=3.9.3
-pkgrel=6
+pkgver=3.10.1
+pkgrel=1
 pkgdesc="A translator library for raster geospatial data formats (mingw-w64)"
 arch=('any')
 mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
@@ -80,14 +80,10 @@ depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs"
          "${MINGW_PACKAGE_PREFIX}-zstd")
 source=(https://github.com/OSGeo/gdal/releases/download/v${pkgver}/gdal-${pkgver}.tar.gz
         001-fix-bindings-install-path.patch
-        002-remove-manual-soversion.patch
-        003-build-fix-backport.patch
-        https://github.com/OSGeo/gdal/commit/57c59d5262314423157e5d7b4051061899a84ffc.patch)
-sha256sums=('f293d8ccc6b98f617db88f8593eae37f7e4b32d49a615b2cba5ced12c7bebdae'
+        002-remove-manual-soversion.patch)
+sha256sums=('b1c739256d074be42d67c6c3d33eee94c90a490ebb02fcb7fc21c569a6fc78bd'
             'bfb0b42c8562bd45ae5cff71d42b042e398dff9a9c1f5bb08d8717a7753d4f3f'
-            'fc815a58fe229db3c44bae15f405cafbeb82de91ec3f35564569c5bbecb1c3d7'
-            '7b2fdb18d71f84f7a53a9185c71bb4ac7e510e126c37a218055bbd439a832e8c'
-            '98e2a16b824de63960a9f331088497dc92982e656983129aee9a889eb10c56d1')
+            'fc815a58fe229db3c44bae15f405cafbeb82de91ec3f35564569c5bbecb1c3d7')
 
 apply_patch_with_msg() {
   for _patch in "$@"
@@ -98,15 +94,10 @@ apply_patch_with_msg() {
 }
 
 prepare() {
-  cd ${srcdir}/${_realname}-${pkgver}
+  cd "${srcdir}"/${_realname}-${pkgver}
   apply_patch_with_msg \
     001-fix-bindings-install-path.patch \
-    002-remove-manual-soversion.patch \
-    57c59d5262314423157e5d7b4051061899a84ffc.patch
-
-  # https://github.com/OSGeo/gdal/commit/a62665e7ffc0d7daf5f211c8e5ae44a9b5a4c802
-  apply_patch_with_msg \
-    003-build-fix-backport.patch
+    002-remove-manual-soversion.patch
 }
 
 build() {
@@ -188,9 +179,9 @@ package_gdal() {
   install -Dm644 "${srcdir}/${_realname}-${pkgver}/LICENSE.TXT" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/LICENSE"
 
   # Move python stuff
-  mkdir -p ${srcdir}/build-${MSYSTEM}-shared/{bin,lib}
-  mv ${pkgdir}${MINGW_PREFIX}/bin/*py ${srcdir}/build-${MSYSTEM}-shared/bin
-  mv ${pkgdir}${MINGW_PREFIX}/lib/python* ${srcdir}/build-${MSYSTEM}-shared/lib
+  mkdir -p "${srcdir}"/build-${MSYSTEM}-shared/{bin,lib}
+  mv "${pkgdir}"${MINGW_PREFIX}/bin/*py "${srcdir}"/build-${MSYSTEM}-shared/bin
+  mv "${pkgdir}"${MINGW_PREFIX}/lib/python* "${srcdir}"/build-${MSYSTEM}-shared/lib
 }
 
 package_python-gdal() {
@@ -203,9 +194,9 @@ package_python-gdal() {
   msg2 "Installing Python bindings"
   cd "${srcdir}/build-${MSYSTEM}-shared"
 
-  install -d ${pkgdir}${MINGW_PREFIX}/{bin,lib}
-  mv ${srcdir}/build-${MSYSTEM}-shared/bin/* ${pkgdir}${MINGW_PREFIX}/bin
-  mv ${srcdir}/build-${MSYSTEM}-shared/lib/* ${pkgdir}${MINGW_PREFIX}/lib
+  install -d "${pkgdir}"${MINGW_PREFIX}/{bin,lib}
+  mv "${srcdir}"/build-${MSYSTEM}-shared/bin/* "${pkgdir}"${MINGW_PREFIX}/bin
+  mv "${srcdir}"/build-${MSYSTEM}-shared/lib/* "${pkgdir}"${MINGW_PREFIX}/lib
 
   # fix python command in files
   local _mingw_prefix=$(cygpath -am ${MINGW_PREFIX})

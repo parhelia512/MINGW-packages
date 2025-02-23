@@ -1,5 +1,3 @@
-diff --git a/numba/__init__.py b/numba/__init__.py
-index 28a723384b3..737766ce457 100644
 --- a/numba/__init__.py
 +++ b/numba/__init__.py
 @@ -39,6 +39,11 @@ def extract_version(mod):
@@ -14,8 +12,6 @@ index 28a723384b3..737766ce457 100644
      try:
          import scipy
      except ImportError:
-diff --git a/setup.py b/setup.py
-index 41188b846fe..f5f80dfe191 100644
 --- a/setup.py
 +++ b/setup.py
 @@ -21,8 +21,9 @@

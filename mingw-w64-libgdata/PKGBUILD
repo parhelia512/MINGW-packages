@@ -37,14 +37,12 @@ prepare() {
   cd ${_realname}-${pkgver}
 
   # https://gitlab.gnome.org/GNOME/libgdata/-/merge_requests/44
-  patch -p1 -i ${srcdir}/0003-wsock.patch
-  patch -p1 -i ${srcdir}/build-fix.patch
+  patch -p1 -i "${srcdir}"/0003-wsock.patch
+  patch -p1 -i "${srcdir}"/build-fix.patch
 }
 
 build() {
-  [[ -d build-${MINGW_CHOST} ]] && rm -rf build-${MINGW_CHOST}
-  mkdir -p build-${MINGW_CHOST}
-  cd build-${MINGW_CHOST}
+  mkdir -p build-${MSYSTEM} && cd build-${MSYSTEM}
 
   MSYS2_ARG_CONV_EXCL="--prefix=" \
   ${MINGW_PREFIX}/bin/meson \
@@ -63,12 +61,12 @@ build() {
 }
 
 check() {
-  cd "${srcdir}/build-${MINGW_CHOST}"
+  cd "${srcdir}/build-${MSYSTEM}"
   ${MINGW_PREFIX}/bin/meson.exe test || true
 }
 
 package() {
-  cd "${srcdir}/build-${MINGW_CHOST}"
+  cd "${srcdir}/build-${MSYSTEM}"
   DESTDIR="${pkgdir}" ${MINGW_PREFIX}/bin/meson.exe install
 
   install -Dm644 "${srcdir}/${_realname}-${pkgver}/COPYING" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING"

@@ -26,19 +26,19 @@ prepare() {
 build() {
   mkdir -p "${srcdir}/build-${MSYSTEM}" && cd "${srcdir}/build-${MSYSTEM}"
 
-	../${_realname}-${pkgver}/configure \
+  ../${_realname}-${pkgver}/configure \
     --host=${MINGW_CHOST} \
     --target=mingw32 \
     --build=${MINGW_CHOST} \
     --prefix=${MINGW_PREFIX}
 
-	make
+  make
 }
 
 package() {
   cd "${srcdir}/build-${MSYSTEM}"
 
-  make DESTDIR=${pkgdir} install
+  make DESTDIR="${pkgdir}" install
 
   # Fix mod_virtualpg location to be possible: SELECT load_extension('mod_virtualpg');
   mv "${pkgdir}${MINGW_PREFIX}/lib/mod_virtualpg.dll" "${pkgdir}${MINGW_PREFIX}/bin/"

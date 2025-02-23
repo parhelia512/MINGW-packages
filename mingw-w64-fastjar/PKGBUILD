@@ -19,9 +19,8 @@ source=("https://download.savannah.nongnu.org/releases/${_realname}/${_realname}
 sha256sums=('f156abc5de8658f22ee8f08d7a72c88f9409ebd8c7933e9466b0842afeb2f145')
 
 build() {
-  cd "${srcdir}"/${_realname}-${pkgver}
-  [[ -d "${srcdir}"/build-${CARCH} ]] && rm -rf "${srcdir}"/build-${CARCH}
-  mkdir -p "${srcdir}"/build-${CARCH} && cd "${srcdir}"/build-${CARCH}
+  mkdir -p "${srcdir}"/build-${MSYSTEM} && cd "${srcdir}"/build-${MSYSTEM}
+
   ../${_realname}-${pkgver}/configure \
     --prefix=${MINGW_PREFIX} \
     --build=${MINGW_CHOST} \
@@ -32,11 +31,11 @@ build() {
 }
 
 check() {
-  cd "${srcdir}"/build-${CARCH}
+  cd "${srcdir}"/build-${MSYSTEM}
   make check
 }
 
 package() {
-  cd "${srcdir}"/build-${CARCH}
+  cd "${srcdir}"/build-${MSYSTEM}
   make install DESTDIR="${pkgdir}"
 }

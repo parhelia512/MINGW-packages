@@ -29,12 +29,11 @@ _global_srcdir=${_realname}-${pkgver}
 prepare() {
   cd ${_global_srcdir}
 
-  patch -p1 -i ${srcdir}/001-global-6.6.2-mingw64.patch
+  patch -p1 -i "${srcdir}"/001-global-6.6.2-mingw64.patch
   autoconf
 }
 
 build() {
-  [[ -d "${srcdir}"/build-${MSYSTEM} ]] && rm -rf "${srcdir}"/build-${MSYSTEM}
   mkdir -p "${srcdir}"/build-${MSYSTEM} && cd "${srcdir}"/build-${MSYSTEM}
 
   export CPPFLAGS="-I${MINGW_PREFIX}/include/ncurses"

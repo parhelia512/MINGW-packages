@@ -3,8 +3,8 @@
 _realname=cargo-c
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=0.10.7
-pkgrel=2
+pkgver=0.10.11
+pkgrel=1
 pkgdesc='A cargo subcommand to build and install C-ABI compatibile dynamic and static libraries (mingw-w64)'
 arch=('any')
 mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64' 'clangarm64')
@@ -22,17 +22,13 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-rust"
              "${MINGW_PACKAGE_PREFIX}-openssl")
 options=('!strip')
 source=("https://github.com/lu-zero/cargo-c/archive/v${pkgver}/${_realname}-${pkgver}.tar.gz"
-        "${_realname}-${pkgver}.Cargo.lock"::"https://github.com/lu-zero/cargo-c/releases/download/v${pkgver}/Cargo.lock"
-        001-add-lib-prefix-on-windows-gnu.patch)
-sha256sums=('c4532dd2bf23769df5f64649d5b0c037fb2a29467c74d16a54bad3054d9f3f3a'
-            '7272f41442713ce20c42198fdf9128a77b539ded1649872ab88dc1411db8dee4'
-            'a35e7fbfc0d4113154572ae204c0a6bdf21d1ec12ac6882a133b51e211467805')
+        "${_realname}-${pkgver}.Cargo.lock"::"https://github.com/lu-zero/cargo-c/releases/download/v${pkgver}/Cargo.lock")
+sha256sums=('8a6d6dc589d6d70bd7eb95971e3c608240e1f9c938dd5b54a049977333b59f05'
+            'c65ee1fcd2fefa0a3c572477243c64326f21ff5c85b960a7975663141121eb91')
 
 prepare() {
     cp "${_realname}-${pkgver}.Cargo.lock" "${_realname}-${pkgver}/Cargo.lock"
     cd "${_realname}-${pkgver}"
-
-    patch -p1 -i "${srcdir}"/001-add-lib-prefix-on-windows-gnu.patch
 
     cargo fetch --locked --target "$(rustc -vV | sed -n 's/host: //p')"
 }
@@ -49,6 +45,7 @@ build() {
     cd "${_realname}-${pkgver}"
 
     _env
+    export RUSTFLAGS="$RUSTFLAGS -C target-feature=-crt-static"
     cargo build --frozen --profile release-strip
 }
 

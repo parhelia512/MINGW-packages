@@ -9,7 +9,7 @@ _realname=nodejs
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
 pkgver=23.5.0
-pkgrel=1
+pkgrel=2
 pkgdesc="An open-source, cross-platform JavaScript runtime environment (mingw-w64)"
 arch=('any')
 mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
@@ -175,8 +175,8 @@ package() {
   mv -v "${pkgdir}${MINGW_PREFIX}/bin/node"{_exe,.exe}
 
   # install the cmd-based wrappers
-  cp -f ${srcdir}/node-v${pkgver}/deps/npm/bin/node-gyp-bin/node-gyp.cmd "${pkgdir}${MINGW_PREFIX}/bin"
-  cp -f ${srcdir}/node-v${pkgver}/deps/npm/bin/{corepack,npm,npx}.cmd "${pkgdir}${MINGW_PREFIX}/bin"
+  cp -f "${srcdir}"/node-v${pkgver}/deps/npm/bin/node-gyp-bin/node-gyp.cmd "${pkgdir}${MINGW_PREFIX}/bin"
+  cp -f "${srcdir}"/node-v${pkgver}/deps/npm/bin/{corepack,npm,npx}.cmd "${pkgdir}${MINGW_PREFIX}/bin"
 
   install -d "${pkgdir}${MINGW_PREFIX}/share/doc/nodejs"
   cp -r doc/api/{*.html,assets} "${pkgdir}${MINGW_PREFIX}/share/doc/nodejs"

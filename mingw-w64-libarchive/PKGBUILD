@@ -36,7 +36,6 @@ prepare() {
 }
 
 build() {
-  [[ -d "${srcdir}/build-${MSYSTEM}" ]] && rm -rf "${srcdir}/build-${MSYSTEM}"
   mkdir -p "${srcdir}/build-${MSYSTEM}" && cd "${srcdir}/build-${MSYSTEM}"
 
   # Mention default options explicitly to clarify any confusion
@@ -65,5 +64,5 @@ package() {
  
   #fix issue with hard-coded path in libarchive.pc file.
   _localpath=$(cygpath -wm ${MINGW_PREFIX})
-  sed -i -e "s|${_localpath}|${MINGW_PREFIX}|g" ${pkgdir}/${MINGW_PREFIX}/lib/pkgconfig/libarchive.pc
+  sed -i -e "s|${_localpath}|${MINGW_PREFIX}|g" "${pkgdir}"/${MINGW_PREFIX}/lib/pkgconfig/libarchive.pc
 }

@@ -3,14 +3,14 @@
 _realname=faker
 pkgbase=mingw-w64-python-${_realname}
 pkgname=("${MINGW_PACKAGE_PREFIX}-python-${_realname}")
-pkgver=33.3.0
+pkgver=35.0.0
 pkgrel=1
 pkgdesc="Faker generates fake data for you (mingw-w64)"
 arch=('any')
 mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
 msys2_references=(
   'archlinux: python-faker'
-  'pypi: Faker'
+  'purl: pkg:pypi/faker'
 )
 url="https://faker.readthedocs.io/"
 msys2_repository_url="https://github.com/joke2k/faker"
@@ -26,7 +26,7 @@ checkdepends=("${MINGW_PACKAGE_PREFIX}-python-ukpostcodeparser"
               "${MINGW_PACKAGE_PREFIX}-python-email-validator")
 options=('!strip')
 source=("https://pypi.org/packages/source/${_realname::1}/${_realname}/${_realname}-${pkgver}.tar.gz")
-sha256sums=('2abb551a05b75d268780b6095100a48afc43c53e97422002efbfc1272ebf5f26')
+sha256sums=('42f2da8cf561e38c72b25e9891168b1e25fec42b6b0b5b0b6cd6041da54af885')
 
 build() {
   cp -r "${_realname}-${pkgver}" "python-build-${MSYSTEM}" && cd "python-build-${MSYSTEM}"

@@ -9,6 +9,9 @@ pkgdesc="Video game music file emulation/playback library (mingw-w64)"
 arch=('any')
 mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64' 'clangarm64')
 url="https://bitbucket.org/mpyne/game-music-emu/wiki/Home"
+msys2_references=(
+  "cpe: cpe:/a:game-music-emu_project:game-music-emu"
+)
 license=('LGPL')
 depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs"
          "${MINGW_PACKAGE_PREFIX}-zlib")
@@ -35,8 +38,7 @@ prepare() {
 
 build() {
   echo "Building static library"
-  [[ -d "${srcdir}/build-${CARCH}-static" ]] && rm -rf "${srcdir}/build-${CARCH}-static"
-  mkdir -p "${srcdir}/build-${CARCH}-static" && cd "${srcdir}/build-${CARCH}-static"
+  mkdir -p "${srcdir}/build-${MSYSTEM}-static" && cd "${srcdir}/build-${MSYSTEM}-static"
 
   MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
   ${MINGW_PREFIX}/bin/cmake \
@@ -50,8 +52,7 @@ build() {
   ${MINGW_PREFIX}/bin/cmake.exe --build ./
 
   echo "Building shared library"
-  [[ -d "${srcdir}/build-${CARCH}-shared" ]] && rm -rf "${srcdir}/build-${CARCH}-shared"
-  mkdir -p "${srcdir}/build-${CARCH}-shared" && cd "${srcdir}/build-${CARCH}-shared"
+  mkdir -p "${srcdir}/build-${MSYSTEM}-shared" && cd "${srcdir}/build-${MSYSTEM}-shared"
 
   MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
   ${MINGW_PREFIX}/bin/cmake \
@@ -66,10 +67,10 @@ build() {
 }
 
 package() {
-  cd "${srcdir}/build-${CARCH}-static"
+  cd "${srcdir}/build-${MSYSTEM}-static"
    DESTDIR="${pkgdir}" ${MINGW_PREFIX}/bin/cmake.exe --build ./ --target install
 
-  cd "${srcdir}/build-${CARCH}-shared"
+  cd "${srcdir}/build-${MSYSTEM}-shared"
    DESTDIR="${pkgdir}" ${MINGW_PREFIX}/bin/cmake.exe --build ./ --target install
 
   install -Dm644 "${srcdir}/game-music-emu-${pkgver}/license.txt" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/license.txt"

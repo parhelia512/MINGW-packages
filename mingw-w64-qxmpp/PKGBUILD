@@ -4,7 +4,7 @@
 _realname=qxmpp
 pkgbase=mingw-w64-${_realname}
 pkgname="${MINGW_PACKAGE_PREFIX}-${_realname}"
-pkgver=1.9.2
+pkgver=1.9.4
 pkgrel=1
 pkgdesc="Cross-platform C++ XMPP client and server library (mingw-w64)"
 arch=('any')
@@ -19,7 +19,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
              "${MINGW_PACKAGE_PREFIX}-cmake"
              "${MINGW_PACKAGE_PREFIX}-ninja")
 source=("https://github.com/qxmpp-project/${_realname}/archive/v${pkgver}/${_realname}-${pkgver}.tar.gz")
-sha256sums=('b6ddfe446ce5f628d3bc3a2a8d09ea86cdb9b7773435d112192e416f5a69981d')
+sha256sums=('4403e43a0e8b6afa68f6e1e986e4ec19a08a6bf0db539ab7934a58afa1ddc532')
 
 build() {
   declare -a extra_config
@@ -29,7 +29,7 @@ build() {
     extra_config+=("-DCMAKE_BUILD_TYPE=Debug")
   fi
 
-  mkdir ${srcdir}/build-${MSYSTEM} && cd ${srcdir}/build-${MSYSTEM}
+  mkdir "${srcdir}"/build-${MSYSTEM} && cd "${srcdir}"/build-${MSYSTEM}
 
   MSYS2_ARG_CONV_EXCL="-DCMAKE_INSTALL_PREFIX=" \
   ${MINGW_PREFIX}/bin/cmake \
@@ -45,9 +45,9 @@ build() {
 }
 
 package() {
-  cd ${srcdir}/build-${MSYSTEM}
-  DESTDIR=${pkgdir} ${MINGW_PREFIX}/bin/cmake --install .
+  cd "${srcdir}"/build-${MSYSTEM}
+  DESTDIR="${pkgdir}" ${MINGW_PREFIX}/bin/cmake --install .
 
   install -d "${pkgdir}${MINGW_PREFIX}"/share/licenses/${_realname}
-  install -Dm644 ${srcdir}/${_realname}-${pkgver}/LICENSES/* -t ${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/
+  install -Dm644 "${srcdir}"/${_realname}-${pkgver}/LICENSES/* -t "${pkgdir}"${MINGW_PREFIX}/share/licenses/${_realname}/
 }

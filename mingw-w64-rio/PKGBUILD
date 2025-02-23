@@ -2,16 +2,17 @@
 _realname=rio
 pkgbase=mingw-w64-${_realname}
 pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}")
-pkgver=0.2.2
+pkgver=0.2.7
 pkgrel=1
 pkgdesc="A hardware-accelerated GPU terminal emulator focusing to run in desktops and browsers (mingw-w64)"
 arch=('any')
 mingw_arch=('mingw64' 'ucrt64' 'clang64' 'clangarm64')
 url="https://github.com/raphamorim/rio"
 license=('spdx:MIT')
+depends=("${MINGW_PACKAGE_PREFIX}-gcc-libs")
 makedepends=("${MINGW_PACKAGE_PREFIX}-rust")
 source=("https://github.com/raphamorim/${_realname}/archive/refs/tags/v${pkgver}.tar.gz")
-sha256sums=('a334cc6c71621ff84aef70d5185caee663f0409ebf3942f7496c5ba6533188b2')
+sha256sums=('97376694c864785bd7e6214d8d5d26dda47e9a7d134beeaa4dcf75bbebc63362')
 
 prepare() {
   cd "${_realname}-${pkgver}"

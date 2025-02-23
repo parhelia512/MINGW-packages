@@ -9,7 +9,7 @@ pkgrel=2
 pkgdesc='A drop-in replacement for argparse that allows options to also be set via config files and/or environment variables (mingw-w64)'
 url='https://github.com/bw2/ConfigArgParse'
 msys2_references=(
-  'pypi: ConfigArgParse'
+  'purl: pkg:pypi/configargparse'
 )
 license=('spdx:MIT')
 arch=('any')
@@ -23,7 +23,7 @@ source=("https://pypi.org/packages/source/${_pyname::1}/${_pyname}/${_pyname}-${
 sha256sums=('e7067471884de5478c58a511e529f0f9bd1c66bfef1dea90935438d6c23306d1')
 
 prepare() {
-  cd ${srcdir}
+  cd "${srcdir}"
   rm -rf python-build-${MSYSTEM} | true
   cp -r "${_pyname}-${pkgver}" "python-build-${MSYSTEM}"
 }

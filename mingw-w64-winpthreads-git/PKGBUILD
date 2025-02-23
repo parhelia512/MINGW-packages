@@ -5,9 +5,9 @@
 _realname=winpthreads
 pkgbase=mingw-w64-${_realname}-git
 pkgname=("${MINGW_PACKAGE_PREFIX}-${_realname}-git" "${MINGW_PACKAGE_PREFIX}-libwinpthread-git")
-pkgver=12.0.0.r459.g63f3f2846
+pkgver=12.0.0.r509.g079e6092b
 pkgrel=1
-_commit='63f3f284635f4a1a09828acd2e6f6bea1eacb0e7'
+_commit='079e6092b3c49a791e2d36282781827c75d12bba'
 pkgdesc="MinGW-w64 winpthreads library (mingw-w64)"
 url="https://www.mingw-w64.org/"
 msys2_repository_url="https://sourceforge.net/p/mingw-w64/mingw-w64/ci/master/tree/mingw-w64-libraries/winpthreads"
@@ -27,7 +27,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
 options=('!emptydirs')
 source=("mingw-w64"::"git+https://git.code.sf.net/p/mingw-w64/mingw-w64#commit=$_commit"
         "0001-Define-__-de-register_frame_info-in-fake-libgcc_s.patch")
-sha256sums=('9744d8767fa49d631c8b411df20bd285e9bce7261850f78d7edf65db1798ac05'
+sha256sums=('c79f950762101d293e9a6c063e69dd7b9ec36f0f28966b7643c957a227d3b55b'
             '2e779bcc60a1422b23e0cfdb5c0f6851f2382592bb4675d08a6bdef78d5e5c10')
 
 pkgver() {
@@ -45,7 +45,7 @@ prepare() {
 }
 
 build() {
-  mkdir -p "${srcdir}"/build-${MSYSTEM} && cd ${srcdir}/build-${MSYSTEM}
+  mkdir -p "${srcdir}"/build-${MSYSTEM} && cd "${srcdir}"/build-${MSYSTEM}
 
   # https://github.com/msys2/MINGW-packages/issues/7043
   CFLAGS="${CFLAGS//-Wp,-D__USE_MINGW_ANSI_STDIO=1/}"
@@ -78,7 +78,7 @@ build() {
 
 _install_licenses() {
   # TODO: any more license files?
-  install -Dm644 ${srcdir}/mingw-w64/mingw-w64-libraries/winpthreads/COPYING ${pkgdir}${MINGW_PREFIX}/share/licenses/$1/COPYING
+  install -Dm644 "${srcdir}"/mingw-w64/mingw-w64-libraries/winpthreads/COPYING "${pkgdir}"${MINGW_PREFIX}/share/licenses/$1/COPYING
 }
 
 package_winpthreads-git() {
@@ -86,10 +86,10 @@ package_winpthreads-git() {
   provides=("${MINGW_PACKAGE_PREFIX}-${_realname}")
   conflicts=("${MINGW_PACKAGE_PREFIX}-${_realname}")
 
-  cd ${srcdir}/build-${MSYSTEM}
-  make DESTDIR=${pkgdir} install
+  cd "${srcdir}"/build-${MSYSTEM}
+  make DESTDIR="${pkgdir}" install
 
-  rm -rf ${pkgdir}${MINGW_PREFIX}/bin
+  rm -rf "${pkgdir}"${MINGW_PREFIX}/bin
 
   _install_licenses ${_realname}
 }
@@ -98,11 +98,11 @@ package_libwinpthread-git() {
   provides=("${MINGW_PACKAGE_PREFIX}-libwinpthread")
   conflicts=("${MINGW_PACKAGE_PREFIX}-libwinpthread")
 
-  cd ${srcdir}/build-${MSYSTEM}
-  make DESTDIR=${pkgdir} install
+  cd "${srcdir}"/build-${MSYSTEM}
+  make DESTDIR="${pkgdir}" install
 
-  rm -rf ${pkgdir}${MINGW_PREFIX}/include
-  rm -rf ${pkgdir}${MINGW_PREFIX}/lib
+  rm -rf "${pkgdir}"${MINGW_PREFIX}/include
+  rm -rf "${pkgdir}"${MINGW_PREFIX}/lib
 
   _install_licenses libwinpthread
 }

@@ -9,6 +9,9 @@ pkgdesc="A compat layer/bridge from libmodplug to libopenmpt (mingw-w64)"
 arch=('any')
 mingw_arch=('mingw32' 'mingw64' 'ucrt64' 'clang64' 'clangarm64')
 url="https://lib.openmpt.org"
+msys2_references=(
+  "cpe: cpe:/a:openmpt:libopenmpt"
+)
 license=("BSD")
 depends=("${MINGW_PACKAGE_PREFIX}-libopenmpt")
 makedepends=("${MINGW_PACKAGE_PREFIX}-cc"
@@ -25,8 +28,8 @@ prepare() {
 }
 
 build() {
-  [[ -d ${srcdir}/build-${CARCH} ]] && rm -rf ${srcdir}/build-${CARCH}
-  mkdir -p "${srcdir}/build-${CARCH}" && cd "${srcdir}/build-${CARCH}"
+  mkdir -p "${srcdir}/build-${MSYSTEM}" && cd "${srcdir}/build-${MSYSTEM}"
+
   ../${_realname}-${pkgver}-openmpt1/configure \
     --prefix=${MINGW_PREFIX} \
     --build=${MINGW_CHOST} \
@@ -40,12 +43,12 @@ build() {
 }
 
 check() {
-  cd "${srcdir}/build-${CARCH}"
+  cd "${srcdir}/build-${MSYSTEM}"
   make check || true
 }
 
 package() {
-  cd "${srcdir}/build-${CARCH}"
+  cd "${srcdir}/build-${MSYSTEM}"
   make DESTDIR="${pkgdir}" install
 
   install -Dm644 "${srcdir}/${_realname}-${pkgver}-openmpt1/LICENSE" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/LICENSE"

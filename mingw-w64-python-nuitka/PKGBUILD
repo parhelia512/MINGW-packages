@@ -3,10 +3,7 @@
 _realname=nuitka
 pkgbase=mingw-w64-python-${_realname}
 pkgname=("${MINGW_PACKAGE_PREFIX}-python-${_realname}")
-provides=("${MINGW_PACKAGE_PREFIX}-python3-${_realname}")
-conflicts=("${MINGW_PACKAGE_PREFIX}-python3-${_realname}")
-replaces=("${MINGW_PACKAGE_PREFIX}-python3-${_realname}")
-pkgver=2.5.9
+pkgver=2.6.6
 pkgrel=1
 pkgdesc="Python to native compiler (mingw-w64)"
 arch=('any')
@@ -15,7 +12,7 @@ url="https://www.nuitka.net/"
 msys2_repository_url="https://github.com/Nuitka/Nuitka"
 msys2_references=(
   'archlinux: nuitka'
-  'pypi: Nuitka'
+  'purl: pkg:pypi/nuitka'
 )
 license=('spdx:Apache-2.0')
 depends=("${MINGW_PACKAGE_PREFIX}-python"
@@ -27,7 +24,7 @@ makedepends=("${MINGW_PACKAGE_PREFIX}-python-build"
 optdepends=("${MINGW_PACKAGE_PREFIX}-ccache: Provides build caching")
 options=('!strip')
 source=("https://pypi.org/packages/source/N/${_realname^}/${_realname^}-${pkgver}.tar.gz")
-sha256sums=('6cfb37449c9dd60bf6e9f79e420198019f44bb5154e3d6a40d3124d5cc26edf1')
+sha256sums=('4376fe46a5eea7db570266773fedf47329b6d529475900d2ba0dc8054e7f5aaf')
 
 build() {
   cp -r "${_realname}-${pkgver}" "python-build-${MSYSTEM}" && cd "python-build-${MSYSTEM}"

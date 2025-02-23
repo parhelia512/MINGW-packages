@@ -40,20 +40,19 @@ pkgver() {
 }
 
 prepare() {
-  cd ${srcdir}/${_realname}
-  patch -p1 -i ${srcdir}/0001-make-daalabase-public.mingw.patch
-  patch -p1 -i ${srcdir}/0002-make-daalabase-public.mingw.patch
-  patch -p1 -i ${srcdir}/0003-missing-include.patch
-  patch -p1 -i ${srcdir}/0004-xp-sp2.all.patch
-  patch -p1 -i ${srcdir}/0005-no-pkg-config-prefix.mingw.patch
+  cd "${srcdir}"/${_realname}
+  patch -p1 -i "${srcdir}"/0001-make-daalabase-public.mingw.patch
+  patch -p1 -i "${srcdir}"/0002-make-daalabase-public.mingw.patch
+  patch -p1 -i "${srcdir}"/0003-missing-include.patch
+  patch -p1 -i "${srcdir}"/0004-xp-sp2.all.patch
+  patch -p1 -i "${srcdir}"/0005-no-pkg-config-prefix.mingw.patch
 
   autoreconf -fi
 }
 
 build() {
-  [[ -d "${srcdir}/build-${MINGW_CHOST}" ]] && rm -rf "${srcdir}/build-${MINGW_CHOST}"
-  mkdir -p "${srcdir}/build-${MINGW_CHOST}"
-  cd "${srcdir}/build-${MINGW_CHOST}"
+  mkdir -p "${srcdir}/build-${MSYSTEM}" && cd "${srcdir}/build-${MSYSTEM}"
+
   ../${_realname}/configure \
     --build=${MINGW_CHOST} \
     --host=${MINGW_CHOST} \
@@ -68,8 +67,8 @@ build() {
 }
 
 package() {
-  cd ${srcdir}/build-${MINGW_CHOST}
-  make DESTDIR=${pkgdir} install
+  cd "${srcdir}"/build-${MSYSTEM}
+  make DESTDIR="${pkgdir}" install
 
-  install -Dm644 ${srcdir}/${_realname}/COPYING ${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/COPYING
+  install -Dm644 "${srcdir}"/${_realname}/COPYING "${pkgdir}"${MINGW_PREFIX}/share/licenses/${_realname}/COPYING
 }

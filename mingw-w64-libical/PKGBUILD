@@ -7,7 +7,7 @@ provides=(${MINGW_PACKAGE_PREFIX}-${_realname}-lib)
 conflicts=(${MINGW_PACKAGE_PREFIX}-${_realname}-glib)
 replaces=(${MINGW_PACKAGE_PREFIX}-${_realname}-glib)
 pkgver=3.0.19
-pkgrel=1
+pkgrel=2
 pkgdesc="An Open Source implementation of the iCalendar protocols and protocol data units (mingw-w64)"
 arch=('any')
 mingw_arch=('mingw64' 'ucrt64' 'clang64')
@@ -40,11 +40,11 @@ prepare() {
   tar --exclude=ReadMe.md -zxf ${_realname}-${pkgver}.tar.gz
 
   cd ${_realname}-${pkgver}
-  patch -p1 -i ${srcdir}/001-win.patch
+  patch -p1 -i "${srcdir}"/001-win.patch
 }
 
 build() {
-  mkdir -p ${srcdir}/build-${MSYSTEM} && cd ${srcdir}/build-${MSYSTEM}
+  mkdir -p "${srcdir}"/build-${MSYSTEM} && cd "${srcdir}"/build-${MSYSTEM}
 
   if check_option "debug" "n"; then
     extra_config+=("-DCMAKE_BUILD_TYPE=Release")
